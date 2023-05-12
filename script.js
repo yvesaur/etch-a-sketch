@@ -4,20 +4,50 @@ const colorPickerRadio = document.querySelector('.omsim-grid');
 const sketchArea = document.querySelector('.sketch-content');
 const penButton = document.querySelectorAll('.sketch-buttons button')[0];
 const rainbowButton = document.querySelectorAll('.sketch-buttons button')[1];
+const eraseButton = document.querySelectorAll('.sketch-buttons button')[2];
+
+let isDrawing = false;
+let isRainbow = false;
+let isErasing = false;
+let isMouseDown = false;
+
+
 
 buttonSFX.volume = 0.5;
 
+// Detect what activity is chosen by the user
 function changeCursor(url){
     document.body.style.cursor = `url('${url}'), auto`;
 }
-
 penButton.addEventListener('click', () => {
-    changeCursor('./cursors/penCursor.cur');
+    changeCursor('./cursors/stylus.png');
+    isDrawing = true;
+    isRainbow, isErasing = false;
 })
-
 rainbowButton.addEventListener('click', () => {
-    changeCursor('./cursors/rainbowCursor.ani');
+    changeCursor('./cursors/rainbow.png');
+    isRainbow = true;
+    isDrawing, isErasing = false;
 })
+eraseButton.addEventListener('click', () => {
+    changeCursor('./cursors/rubber.png');
+    isErasing = true;
+    isDrawing, isRainbow = false;
+})
+//
+
+// Detect if the user is holding the LMB (i.e. Drawing on the sketch content)
+window.onmousedown = () => {
+    isMouseDown = true;
+}
+
+// Detect if LMB is released
+window.onmouseup = () => {
+    isMouseDown = false;
+}
+
+
+// Detect if LMB is released
 
 
 
