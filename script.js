@@ -1,15 +1,18 @@
 const mainButtons = document.querySelectorAll('.sketch-buttons button');
 const buttonSFX = document.querySelector('#button-clicked');
-const colorPickerRadio = document.querySelector('.omsim-grid');
+const gridRadio = document.querySelector('.omsim-grid');
 const sketchArea = document.querySelector('.sketch-content');
 const penButton = document.querySelectorAll('.sketch-buttons button')[0];
 const rainbowButton = document.querySelectorAll('.sketch-buttons button')[1];
 const eraseButton = document.querySelectorAll('.sketch-buttons button')[2];
+const clearButton = document.querySelectorAll('.sketch-buttons button')[3];
+const colorRadio = document.querySelector('#color-picker');
+let currentColor;
 
 let isDrawing = false;
 let isRainbow = false;
 let isErasing = false;
-let isMouseDown = false;
+let isMouseDown = 0;
 
 
 
@@ -34,22 +37,39 @@ eraseButton.addEventListener('click', () => {
     isErasing = true;
     isDrawing, isRainbow = false;
 })
+clearButton.addEventListener('click', ()=> {
+    document.body.style.cursor = 'default';
+    isDrawing, isRainbow, isErasing = false;
+})
 //
 
 // Detect if the user is holding the LMB (i.e. Drawing on the sketch content)
-window.onmousedown = () => {
-    isMouseDown = true;
+document.body.onmousedown = function(){
+    ++isMouseDown;
 }
 
 // Detect if LMB is released
-window.onmouseup = () => {
-    isMouseDown = false;
+document.body.onmouseup = function(){
+    --isMouseDown;
 }
 
+setInterval(()=> {
+    if(isMouseDown){
+        console.log('LMB is still held down.');
+    } else {
+        console.log('LMB is not held down.');
+    }
+},1000);
 
-// Detect if LMB is released
 
-
+// Coloring - isDrawing
+if(isDrawing == true) {
+    while(isMouseDown == true){
+        sketchContentPixelList.forEach(pixel => {
+            pixel.addEventListener()
+        })
+    }
+}
 
 // Play a soundFX when button is clicked
 mainButtons.forEach(button => {
@@ -62,7 +82,7 @@ mainButtons.forEach(button => {
 });
 
 // Change the grid size (A * B) when radio is changed
-colorPickerRadio.addEventListener('change', (e) => {
+gridRadio.addEventListener('change', (e) => {
 
     // Clear the pixels when radio is changed again
     sketchArea.innerHTML= '';
@@ -84,4 +104,14 @@ colorPickerRadio.addEventListener('change', (e) => {
         sketchContentPixel.classList.add('pixel');
         sketchArea.appendChild(sketchContentPixel);
     }
+
+    sketchContentPixelList = document.querySelectorAll('.sketch-content .pixel');
+    sketchContentPixelList.forEach(pixel => {
+        pixel.style.border = '0.01rem dotted rgba(0, 0, 0, 0.2)';
+    })
+})
+
+// Get the current selected color if color radio is changed
+colorRadio.addEventListener('change', ()=>{
+    currentColor = colorRadio.value;
 })
