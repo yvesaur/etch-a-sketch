@@ -6,6 +6,7 @@ const penButton = document.querySelectorAll('.sketch-buttons button')[0];
 const rainbowButton = document.querySelectorAll('.sketch-buttons button')[1];
 const eraseButton = document.querySelectorAll('.sketch-buttons button')[2];
 const clearButton = document.querySelectorAll('.sketch-buttons button')[3];
+let sketchContentPixelList = sketchArea.childNodes;
 const colorRadio = document.querySelector('#color-picker');
 let currentColor;
 
@@ -25,35 +26,41 @@ function changeCursor(url){
 penButton.addEventListener('click', () => {
     changeCursor('./cursors/stylus.png');
     isDrawing = true;
-    isRainbow, isErasing = false;
+    isRainbow = false;
+    isErasing = false;
 })
 rainbowButton.addEventListener('click', () => {
     changeCursor('./cursors/rainbow.png');
     isRainbow = true;
-    isDrawing, isErasing = false;
+    isDrawing = false;
+    isErasing = false;
 })
 eraseButton.addEventListener('click', () => {
     changeCursor('./cursors/rubber.png');
     isErasing = true;
-    isDrawing, isRainbow = false;
+    isDrawing = false;
+    isRainbow = false;
 })
 clearButton.addEventListener('click', ()=> {
-    document.body.style.cursor = 'default';
-    isDrawing, isRainbow, isErasing = false;
+    sketchContentPixelList = sketchArea.childNodes;
+    sketchContentPixelList.forEach(pixel => {
+        pixel.style.backgroundColor = "";
+    });
 })
 //
 
 // Detect if the user is holding the LMB (i.e. Drawing on the sketch content)
-document.body.onmousedown = function(){
+sketchArea.addEventListener('mousedown', function() {
     ++isMouseDown;
-}
-
-// Detect if LMB is released
-document.body.onmouseup = function(){
+});
+  
+sketchArea.addEventListener('mouseup', function() {
     --isMouseDown;
-}
+});
+
 
 setInterval(()=> {
+    sketchContentPixelList = sketchArea.querySelectorAll('.pixel');
     if(isMouseDown){
         console.log('LMB is still held down.');
     } else {
@@ -61,15 +68,6 @@ setInterval(()=> {
     }
 },1000);
 
-
-// Coloring - isDrawing
-if(isDrawing == true) {
-    while(isMouseDown == true){
-        sketchContentPixelList.forEach(pixel => {
-            pixel.addEventListener()
-        })
-    }
-}
 
 // Play a soundFX when button is clicked
 mainButtons.forEach(button => {
@@ -104,14 +102,35 @@ gridRadio.addEventListener('change', (e) => {
         sketchContentPixel.classList.add('pixel');
         sketchArea.appendChild(sketchContentPixel);
     }
-
-    sketchContentPixelList = document.querySelectorAll('.sketch-content .pixel');
+    
+    sketchContentPixelList = sketchArea.childNodes;
     sketchContentPixelList.forEach(pixel => {
-        pixel.style.border = '0.01rem dotted rgba(0, 0, 0, 0.2)';
-    })
+        pixel.style.border = '0.001rem dotted rgba(0, 0, 0, 0.3)';
+        pixel.style.userSelect = 'none';
+        pixelListeners('mouseover', pixel);
+        pixelListeners('click', pixel);
+    });
 })
 
 // Get the current selected color if color radio is changed
 colorRadio.addEventListener('change', ()=>{
     currentColor = colorRadio.value;
 })
+
+// Listeners to modify each pixel div element on the sketch area
+function pixelListeners(events, element) {
+    element.addEventListener(`${events}`, () =>{
+        console.log(`Cursor:${events} to div:.${element.className}`);
+        if(isDrawing && String(events) == "click"){
+            element.style.backgroundColor = String(currentColor);
+        } else if (isErasing && String(events) == "click") {
+            element.style.backgroundColor = "";
+        }
+
+        if(isDrawing && isMouseDown){
+            element.style.backgroundColor = String(currentColor);
+        } else if (isErasing && isMouseDown) {
+            element.style.backgroundColor = "";
+        }
+    });
+}
