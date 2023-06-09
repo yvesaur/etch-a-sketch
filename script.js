@@ -8,12 +8,16 @@ const eraseButton = document.querySelectorAll('.sketch-buttons button')[2];
 const clearButton = document.querySelectorAll('.sketch-buttons button')[3];
 let sketchContentPixelList = sketchArea.childNodes;
 const colorRadio = document.querySelector('#color-picker');
+const rainbowColor = ["#FF0000", "#FF8700","#FFD300", "#DEFF0A","#A1FF0A", "#0AFF99",
+                      "#0AEFFF", "#147DF5","#580AFF", "#BE0AFF"];
 let currentColor;
+let currentRainbowColor = 0;
 
 let isDrawing = false;
 let isRainbow = false;
 let isErasing = false;
 let isMouseDown = 0;
+let isDragging = false;
 
 
 
@@ -50,14 +54,13 @@ clearButton.addEventListener('click', ()=> {
 //
 
 // Detect if the user is holding the LMB (i.e. Drawing on the sketch content)
-sketchArea.addEventListener('mousedown', function() {
+document.body.addEventListener('mousedown', function() {
     ++isMouseDown;
 });
   
-sketchArea.addEventListener('mouseup', function() {
+document.body.addEventListener('mouseup', function() {
     --isMouseDown;
 });
-
 
 setInterval(()=> {
     sketchContentPixelList = sketchArea.querySelectorAll('.pixel');
@@ -107,6 +110,7 @@ gridRadio.addEventListener('change', (e) => {
     sketchContentPixelList.forEach(pixel => {
         pixel.style.border = '0.001rem dotted rgba(0, 0, 0, 0.3)';
         pixel.style.userSelect = 'none';
+        sketchArea.style.userSelect = 'none';
         pixelListeners('mouseover', pixel);
         pixelListeners('click', pixel);
     });
@@ -121,16 +125,24 @@ colorRadio.addEventListener('change', ()=>{
 function pixelListeners(events, element) {
     element.addEventListener(`${events}`, () =>{
         console.log(`Cursor:${events} to div:.${element.className}`);
-        if(isDrawing && String(events) == "click"){
-            element.style.backgroundColor = String(currentColor);
-        } else if (isErasing && String(events) == "click") {
-            element.style.backgroundColor = "";
+        if (isRainbow && String(events) == "click") {
+            let color = rainbowColor[currentRainbowColor];
+            element.style.backgroundColor = String(color);
+            console.log(String(color));
+            currentRainbowColor = (currentRainbowColor + 1)% rainbowColor.length;
         }
 
-        if(isDrawing && isMouseDown){
+        if(isMouseDown && isDrawing || String(events) == "click"){
             element.style.backgroundColor = String(currentColor);
-        } else if (isErasing && isMouseDown) {
+        } else if (isErasing && isMouseDown || String(events) == "click") {
             element.style.backgroundColor = "";
+        } 
+         // While on rainbow mode and LMB is hold, it will traverse on rainbowColor array infinitely    
+         else if (isRainbow && isMouseDown) {
+            let color = rainbowColor[currentRainbowColor];
+            element.style.backgroundColor = String(color);
+            console.log(String(color));
+            currentRainbowColor = (currentRainbowColor + 1)% rainbowColor.length;
         }
     });
 }

@@ -1,4 +1,0 @@
-
-ifmousedown == clicked 
-    hovered on grid cell
-    change bgcolor
