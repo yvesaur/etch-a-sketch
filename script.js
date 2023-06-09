@@ -132,9 +132,9 @@ function pixelListeners(events, element) {
             currentRainbowColor = (currentRainbowColor + 1)% rainbowColor.length;
         }
 
-        if(isMouseDown && isDrawing || String(events) == "click"){
+        if(isMouseDown && isDrawing || isMouseDown && String(events) == "click"){
             element.style.backgroundColor = String(currentColor);
-        } else if (isErasing && isMouseDown || String(events) == "click") {
+        } else if (isErasing && isMouseDown || isErasing && String(events) == "click") {
             element.style.backgroundColor = "";
         } 
          // While on rainbow mode and LMB is hold, it will traverse on rainbowColor array infinitely    
