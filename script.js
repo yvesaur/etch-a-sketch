@@ -132,7 +132,7 @@ function pixelListeners(events, element) {
             currentRainbowColor = (currentRainbowColor + 1)% rainbowColor.length;
         }
 
-        if(isMouseDown && isDrawing || isMouseDown && String(events) == "click"){
+        if(isDrawing && isMouseDown || isDrawing && String(events) == "click"){
             element.style.backgroundColor = String(currentColor);
         } else if (isErasing && isMouseDown || isErasing && String(events) == "click") {
             element.style.backgroundColor = "";
